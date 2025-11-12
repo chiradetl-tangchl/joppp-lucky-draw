@@ -14,7 +14,8 @@
     
     body {
       font-family: 'Poppins', sans-serif;
-      background-image: url('background.jpg');
+      /* เพิ่ม ?v=2 เพื่อบังคับโหลดใหม่ */
+      background-image: url('background.jpg?v=2');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -23,7 +24,6 @@
       cursor: pointer;
     }
     
-    /* ช่องสีขาว - ปรับให้ตรงกับรูปมากขึ้น */
     .name-box {
       position: absolute;
       top: 52%;
@@ -48,7 +48,6 @@
       word-wrap: break-word;
     }
     
-    /* สำหรับหน้าจอเล็ก */
     @media (max-width: 768px) {
       #name {
         font-size: 10vw;
@@ -68,8 +67,10 @@
     let interval;
     let current = '';
     
-    // โหลดรายชื่อ
-    fetch('participants.txt')
+    // เพิ่ม cache busting
+    const version = '?v=' + Date.now();
+    
+    fetch('participants.txt' + version)
       .then(response => response.text())
       .then(data => {
         all = data.split('\n').filter(name => name.trim() !== '');
@@ -92,8 +93,6 @@
       }
       
       rolling = true;
-      
-      // หมุนเร็ว 50ms
       interval = setInterval(() => {
         current = active[Math.floor(Math.random() * active.length)];
         document.getElementById('name').textContent = current;
