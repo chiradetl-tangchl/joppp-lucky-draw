@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JoPPP Lucky Draw</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    #name {
+      font-size: 10vw;
+      font-weight: 900;
+      color: #000;
+      text-align: center;
+      padding: 0 5vw;
+    }
+    
+    .roll {
+      animation: roll 0.1s infinite;
+    }
+    
+    @keyframes roll {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div id="name">Loading...</div>
+  
+  <script>
+    let all = [];
+    let active = [];
+    let rolling = false;
+    let interval;
+    let current = '';
+    
+    // โหลดข้อมูลจาก participants.txt
+    fetch('participants.txt')
+      .then(response => response.text())
+      .then(data => {
+        all = data.split('\n').filter(name => name.trim() !== '');
+        const saved = sessionStorage.getItem('active');
+        active = saved ? JSON.parse(saved) : [...all];
+        document.getElementById('name').textContent = 'Press Space';
+      })
+      .catch(() => {
+        document.getElementById('name').textContent = 'Error';
+      });
+    
+    function save() {
+      sessionStorage.setItem('active', JSON.stringify(active));
+    }
+    
+    function start() {
+      if (active.length === 0) {
+        document.getElementById('name').textContent = 'Done!';
+        return;
+      }
+      
+      rolling = true;
+      document.getElementById('name').classList.add('roll');
+      
+      interval = setInterval(() => {
+        current = active[Math.floor(Math.random() * active.length)];
+        document.getElementById('name').textContent = current;
+      }, 100);
+    }
+    
+    function stop() {
+      if (!rolling) return;
+      clearInterval(interval);
+      rolling = false;
+      document.getElementById('name').classList.remove('roll');
+      current = active[Math.floor(Math.random() * active.length)];
+      document.getElementById('name').textContent = current;
+    }
+    
+    function deleteAndNext() {
+      if (!current || rolling) return;
+      const i = active.indexOf(current);
+      if (i > -1) active.splice(i, 1);
+      save();
+      
+      if (active.length > 0) {
+        start();
+        setTimeout(stop, 2000);
+      } else {
+        document.getElementById('name').textContent = 'Done!';
+      }
+    }
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        rolling ? stop() : start();
+      } else if (e.code === 'KeyD') {
+        e.preventDefault();
+        deleteAndNext();
+      } else if (e.code === 'KeyR') {
+        e.preventDefault();
+        active = [...all];
+        save();
+        current = '';
+        document.getElementById('name').textContent = 'Press Space';
+      }
+    });
+    
+    document.body.addEventListener('click', function() {
+      rolling ? stop() : (active.length > 0 && start());
+    });
+  </script>
+</body>
+</html>
