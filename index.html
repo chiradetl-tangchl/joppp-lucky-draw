@@ -76,7 +76,7 @@
         all = data.split('\n').filter(name => name.trim() !== '');
         const saved = sessionStorage.getItem('active');
         active = saved ? JSON.parse(saved) : [...all];
-        document.getElementById('name').textContent = 'Press Space';
+        document.getElementById('name').textContent = "Let's Start!";
       })
       .catch(() => {
         document.getElementById('name').textContent = 'Error Loading';
@@ -134,7 +134,7 @@
           active = [...all];
           save();
           current = '';
-          document.getElementById('name').textContent = 'Press Space';
+          document.getElementById('name').textContent = "Let's Start!";
         }
       }
     });
