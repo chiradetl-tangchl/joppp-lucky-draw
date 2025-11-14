@@ -136,7 +136,29 @@
           current = '';
           document.getElementById('name').textContent = "Let's Start!";
         }
-      }
+      } else if (e.code === 'KeyC') {
+    // เช็คไฟล์
+    fetch('participants.txt?v=' + Date.now())
+      .then(response => {
+        const lastModified = response.headers.get('Last-Modified');
+        const etag = response.headers.get('ETag');
+        const contentLength = response.headers.get('Content-Length');
+        
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📁 ข้อมูลไฟล์ participants.txt');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📅 Last Modified:', lastModified || 'ไม่ระบุ');
+        console.log('🔖 ETag:', etag || 'ไม่ระบุ');
+        console.log('📦 Size:', contentLength || 'ไม่ระบุ', 'bytes');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('👥 รวมทั้งหมด:', all.length, 'คน');
+        console.log('✨ คงเหลือ:', active.length, 'คน');
+        console.log('🕐 เช็คเมื่อ:', new Date().toLocaleString('th-TH'));
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        
+        return response.text();
+      });
+  }
     });
     
     document.body.addEventListener('click', function() {
